@@ -1,0 +1,4 @@
+Flask
+Flask-RESTful
+numpy
+ttopt==0.6.2
