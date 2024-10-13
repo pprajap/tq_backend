@@ -1,4 +1,4 @@
-Flask
-Flask-RESTful
+flask
+flask-cors
 numpy
 ttopt==0.6.2

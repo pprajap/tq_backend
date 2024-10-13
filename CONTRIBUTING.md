@@ -1,6 +1,6 @@
-# Contributing to TQ_SDK
+# Contributing to tq_backend
 
-Thank you for your interest in contributing to TQ_SDK! We appreciate your efforts to help improve our project. Please follow these standard practices to ensure a smooth contribution process:
+Thank you for your interest in contributing to tq_backend! We appreciate your efforts to help improve our project. Please follow these standard practices to ensure a smooth contribution process:
 
 ## Standard Practices
 
