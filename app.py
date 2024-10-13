@@ -1,15 +1,37 @@
-from flask import Flask, request, jsonify  # Import necessary Flask modules
+import logging
+import sys
+import numpy as np
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from ttopt import TTOpt  # Import the TTOpt class for optimization
-import numpy as np  # Import numpy for numerical operations
-from threading import Lock  # Import Lock for thread safety
+from ttopt import TTOpt
+from threading import Lock
 
-app = Flask(__name__)  # Initialize the Flask application
-CORS(app)  # Enable CORS for all routes
+app = Flask(__name__)
+CORS(app)
 
-np.random.seed(42)  # Set a random seed for reproducibility
+# Configure logging
+log_filename = 'optimization_logs.txt'
+logging.basicConfig(filename=log_filename, level=logging.INFO, format='%(asctime)s - %(message)s')
 
-rank = 4  # Maximum TT-rank while cross-like iterations
+class StreamToLogger:
+    """
+    Fake file-like stream object that redirects writes to a logger instance.
+    """
+    def __init__(self, logger, log_level=logging.INFO):
+        self.logger = logger
+        self.log_level = log_level
+        self.linebuf = ''
+
+    def write(self, buf):
+        for line in buf.rstrip().splitlines():
+            self.logger.log(self.log_level, line.rstrip())
+
+    def flush(self):
+        pass
+
+np.random.seed(42)
+
+rank = 4
 
 # Define a dictionary to map function names to their implementations
 functions = {
@@ -35,9 +57,19 @@ cache_lock = Lock()
 # Flask route for the optimization
 @app.route('/optimize', methods=['POST'])
 def optimize():
+    # Redirect stdout to the log file
+    logger = logging.getLogger()
+    stdout_logger = StreamToLogger(logger, logging.INFO)
+    sys.stdout = stdout_logger
+
+    # reset log file
+    open(log_filename, 'w').close()
     print('Optimization request received \n')
-    # Extract the JSON data from the request
+
     data = request.json
+    print('-' * 70 + '\n')
+    print(data)
+    print('-' * 70 + '\n')
     
     # Extract parameters from the request data
     dimensions = data.get('dimensions', 100)
@@ -52,21 +84,22 @@ def optimize():
     withCache = data.get('withCache', False)
     withLog = data.get('withLog', True)
     withOpt = data.get('withOpt', False)
+    forceRecal = data.get('forceRecal', False)
     
     # Create a unique key for the current optimization request
     request_key = (dimensions, lowerBound, upperBound, gridSizeFactorP, gridSizeFactorQ, evals, funcName, isFunc, isVect, withCache, withLog, withOpt)
     
-    # Check if the result is already cached
+    # Check cache for existing result
     with cache_lock:
         if request_key in cache:
-            result = cache[request_key]
-            # Log the final state
-            print('Request key found in cache \n')
-            print('-' * 70 + '\n')
-            print(data)
-            print('\n' + '-' * 70 + '\n')
-            print(result + '\n')
-            return jsonify({"minimum_value": result})
+            if not forceRecal:
+                result = cache[request_key]
+                print('Request key found in cache \n')
+                print('-' * 70 + '\n')
+                print(data)
+                print('\n' + '-' * 70 + '\n')
+                print(result + '\n')
+                return jsonify({"minimum_value": result})
     
     # Initialize the optimal x values based on the function name
     if funcName == "Tensor":
@@ -79,6 +112,10 @@ def optimize():
         x_opt_r = np.ones(dimensions)
     else:
         x_opt_r = np.ones(dimensions)
+
+    # Redirect stdout to the log file
+    logger = logging.getLogger()
+    logger.info('Starting optimization')
 
     # Initialize the TTOpt class instance with the correct parameters
     tto = TTOpt(
@@ -100,13 +137,16 @@ def optimize():
     )
 
     # Launch the minimizer
-    tto.optimize(rank)
+    try:
+        tto.optimize(rank)
+        logger.info('Optimization completed successfully')
+    except Exception as e:
+        logger.error(f'Optimization failed: {e}')
+        result = None
 
-    # Log the final state
     print('-' * 30 + 'calculated info' + '-' * 30 + '\n')
     print(tto.info() + '\n\n')
     
-    # Run the minimization and get the result
     result = tto.info()
     
     # Cache the result
@@ -116,6 +156,11 @@ def optimize():
     # Return the result as a JSON response
     return jsonify({"minimum_value": result})
 
+# Flask route for downloading the log file
+@app.route('/download_solution', methods=['GET'])
+def download_solution():
+    print('Download solution request received \n')
+    return send_file(log_filename, as_attachment=True)
+
 if __name__ == '__main__':
-    # Run the Flask app on a specific port (e.g., 5000)
     app.run(host='0.0.0.0', port=5000)
