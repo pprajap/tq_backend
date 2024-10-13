@@ -35,7 +35,7 @@ cache_lock = Lock()
 # Flask route for the optimization
 @app.route('/optimize', methods=['POST'])
 def optimize():
-    print('Optimization request received')
+    print('Optimization request received \n')
     # Extract the JSON data from the request
     data = request.json
     
@@ -61,10 +61,11 @@ def optimize():
         if request_key in cache:
             result = cache[request_key]
             # Log the final state
+            print('Request key found in cache \n')
             print('-' * 70 + '\n')
             print(data)
-            print('-' * 10 + 'fetched from cache' + '-' * 10 + '\n')
-            print(result + '\n\n')
+            print('\n' + '-' * 70 + '\n')
+            print(result + '\n')
             return jsonify({"minimum_value": result})
     
     # Initialize the optimal x values based on the function name
@@ -102,9 +103,7 @@ def optimize():
     tto.optimize(rank)
 
     # Log the final state
-    print('-' * 70 + '\n')
-    print(data)
-    print('-' * 10 + 'calculated' + '-' * 10 + '\n')
+    print('-' * 30 + 'calculated info' + '-' * 30 + '\n')
     print(tto.info() + '\n\n')
     
     # Run the minimization and get the result
