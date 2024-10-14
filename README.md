@@ -1,12 +1,12 @@
-# tq_backend
+# tq-backend
 ```markdown
 # Build the Docker image
 ```sh
-docker build -t tq_backend .
+docker build -t tq-backend .
 ```
 
 # Run the Docker container
 ```sh
-docker run -it --rm -p 5000:5000 tq_backend
+docker run -it --rm -p 5000:5000 tq-backend
 ```
 ```

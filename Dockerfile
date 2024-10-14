@@ -17,7 +17,7 @@ EXPOSE 5000
 CMD ["python", "app.py"]
 
 # build the Docker image
-# docker build -t tq_backend .
+# docker build -t tq-backend .
 
 # run the Docker container
-# docker run -it --rm -p 5000:5000 tq_backend
+# docker run -it --rm -p 5000:5000 tq-backend
