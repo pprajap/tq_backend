@@ -6,14 +6,7 @@ from flask_cors import CORS
 from ttopt import TTOpt
 from threading import Lock
 
-app = Flask(__name__)
-CORS(app)
-
-# Configure logging
-log_filename = 'optimization_logs.txt'
-logging.basicConfig(filename=log_filename, level=logging.INFO, format='%(asctime)s - %(message)s')
-
-class StreamToLogger:
+class StreamToLogger(object):
     """
     Fake file-like stream object that redirects writes to a logger instance.
     """
@@ -28,6 +21,41 @@ class StreamToLogger:
 
     def flush(self):
         pass
+
+class DynamicFileHandler(logging.FileHandler):
+    def __init__(self, filename):
+        super().__init__(filename)
+        self.filename = filename
+
+    def start_logging(self):
+        self.stream = self._open()
+
+    def stop_logging(self):
+        self.close()
+
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Create handlers
+console_handler = logging.StreamHandler(sys.stdout)
+file_handler = logging.FileHandler('app.log')
+
+# Create formatters and add them to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+file_handler.setFormatter(formatter)
+
+# Add handlers to the logger
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+# Redirect stdout to the log file
+stdout_logger = StreamToLogger(logger, logging.INFO)
+sys.stdout = stdout_logger
+
+app = Flask(__name__)
+CORS(app)
 
 np.random.seed(42)
 
@@ -57,104 +85,109 @@ cache_lock = Lock()
 # Flask route for the optimization
 @app.route('/optimize', methods=['POST'])
 def optimize():
-    # Redirect stdout to the log file
-    logger = logging.getLogger()
-    stdout_logger = StreamToLogger(logger, logging.INFO)
-    sys.stdout = stdout_logger
-
-    # reset log file
+    global log_filename
+    log_filename = 'optimize_log.txt'
     open(log_filename, 'w').close()
-    print('Optimization request received \n')
 
-    data = request.json
-    print('-' * 70 + '\n')
-    print(data)
-    print('-' * 70 + '\n')
-    
-    # Extract parameters from the request data
-    dimensions = data.get('dimensions', 100)
-    lowerBound = data.get('lowerBound', -10.0)
-    upperBound = data.get('upperBound', 10.0)
-    gridSizeFactorP = data.get('gridSizeFactorP', 2)
-    gridSizeFactorQ = data.get('gridSizeFactorQ', 12)
-    evals = data.get('evals', 1.E+5)
-    funcName = data.get('funcName', 'Simple')
-    isFunc = data.get('isFunc', True)
-    isVect = data.get('isVect', True)
-    withCache = data.get('withCache', False)
-    withLog = data.get('withLog', True)
-    withOpt = data.get('withOpt', False)
-    forceRecal = data.get('forceRecal', False)
-    
-    # Create a unique key for the current optimization request
-    request_key = (dimensions, lowerBound, upperBound, gridSizeFactorP, gridSizeFactorQ, evals, funcName, isFunc, isVect, withCache, withLog, withOpt)
-    
-    # Check cache for existing result
-    with cache_lock:
-        if request_key in cache:
-            if not forceRecal:
-                result = cache[request_key]
-                print('Request key found in cache \n')
-                print('-' * 70 + '\n')
-                print(data)
-                print('\n' + '-' * 70 + '\n')
-                print(result + '\n')
-                return jsonify({"minimum_value": result})
-    
-    # Initialize the optimal x values based on the function name
-    if funcName == "Tensor":
-        x_opt_r = np.zeros(dimensions)
-        x_opt_r[0] = 2
-        x_opt_r[1] = 3
-    elif funcName == "Simple":
-        x_opt_r = np.zeros(dimensions)
-    elif funcName == "Alpine":
-        x_opt_r = np.ones(dimensions)
-    else:
-        x_opt_r = np.ones(dimensions)
+    # Start fresh logging
+    dynamic_file_handler = DynamicFileHandler(log_filename)
+    dynamic_file_handler.setFormatter(formatter)
+    logger.addHandler(dynamic_file_handler)
+    dynamic_file_handler.start_logging()
 
-    # Redirect stdout to the log file
-    logger = logging.getLogger()
-    logger.info('Starting optimization')
-
-    # Initialize the TTOpt class instance with the correct parameters
-    tto = TTOpt(
-        f=f,                    # Function for minimization with data.X as parameter
-        d=dimensions,           # Number of function dimensions
-        a=lowerBound,           # Grid lower bound (number or list of len d)
-        b=upperBound,           # Grid upper bound (number or list of len d)
-        p=gridSizeFactorP,      # The grid size factor (there will n=p^q points)
-        q=gridSizeFactorQ,      # The grid size factor (there will n=p^q points)
-        evals=evals,            # Number of function evaluations
-        name=funcName,          # Function name for log (this is optional)
-        x_opt_real=x_opt_r,     # Real value of x-minima (x; this is for test)
-        y_opt_real=0.,          # Real value of y-minima (y=f(x); this is for test)
-        is_func=isFunc,         # Whether the function is a callable
-        is_vect=isVect,         # Whether the function is vectorized
-        with_cache=withCache,   # Whether to use caching
-        with_log=withLog,       # Whether to log the optimization process
-        with_opt=withOpt        # Whether to use optimization
-    )
-
-    # Launch the minimizer
     try:
-        tto.optimize(rank)
-        logger.info('Optimization completed successfully')
-    except Exception as e:
-        logger.error(f'Optimization failed: {e}')
-        result = None
+    
+        print('Optimization request received \n')
 
-    print('-' * 30 + 'calculated info' + '-' * 30 + '\n')
-    print(tto.info() + '\n\n')
-    
-    result = tto.info()
-    
-    # Cache the result
-    with cache_lock:
-        cache[request_key] = result
-    
-    # Return the result as a JSON response
-    return jsonify({"minimum_value": result})
+        data = request.json
+        print('-' * 70 + '\n')
+        print(data)
+        print('-' * 70 + '\n')
+        
+        # Extract parameters from the request data
+        dimensions = data.get('dimensions', 100)
+        lowerBound = data.get('lowerBound', -10.0)
+        upperBound = data.get('upperBound', 10.0)
+        gridSizeFactorP = data.get('gridSizeFactorP', 2)
+        gridSizeFactorQ = data.get('gridSizeFactorQ', 12)
+        evals = data.get('evals', 1.E+5)
+        funcName = data.get('funcName', 'Simple')
+        isFunc = data.get('isFunc', True)
+        isVect = data.get('isVect', True)
+        withCache = data.get('withCache', False)
+        withLog = data.get('withLog', True)
+        withOpt = data.get('withOpt', False)
+        forceRecal = data.get('forceRecal', False)
+        
+        # Create a unique key for the current optimization request
+        request_key = (dimensions, lowerBound, upperBound, gridSizeFactorP, gridSizeFactorQ, evals, funcName, isFunc, isVect, withCache, withLog, withOpt)
+        
+        # Check cache for existing result
+        with cache_lock:
+            if request_key in cache:
+                if not forceRecal:
+                    result = cache[request_key]
+                    print('Request key found in cache \n')
+                    print('-' * 70 + '\n')
+                    print(data)
+                    print('\n' + '-' * 70 + '\n')
+                    print(result + '\n')
+                    return jsonify({"minimum_value": result})
+        
+        # Initialize the optimal x values based on the function name
+        if funcName == "Tensor":
+            x_opt_r = np.zeros(dimensions)
+            x_opt_r[0] = 2
+            x_opt_r[1] = 3
+        elif funcName == "Simple":
+            x_opt_r = np.zeros(dimensions)
+        elif funcName == "Alpine":
+            x_opt_r = np.ones(dimensions)
+        else:
+            x_opt_r = np.ones(dimensions)
+
+        # Initialize the TTOpt class instance with the correct parameters
+        tto = TTOpt(
+            f=f,                    # Function for minimization with data.X as parameter
+            d=dimensions,           # Number of function dimensions
+            a=lowerBound,           # Grid lower bound (number or list of len d)
+            b=upperBound,           # Grid upper bound (number or list of len d)
+            p=gridSizeFactorP,      # The grid size factor (there will n=p^q points)
+            q=gridSizeFactorQ,      # The grid size factor (there will n=p^q points)
+            evals=evals,            # Number of function evaluations
+            name=funcName,          # Function name for log (this is optional)
+            x_opt_real=x_opt_r,     # Real value of x-minima (x; this is for test)
+            y_opt_real=0.,          # Real value of y-minima (y=f(x); this is for test)
+            is_func=isFunc,         # Whether the function is a callable
+            is_vect=isVect,         # Whether the function is vectorized
+            with_cache=withCache,   # Whether to use caching
+            with_log=withLog,       # Whether to log the optimization process
+            with_opt=withOpt        # Whether to use optimization
+        )
+
+        # Launch the minimizer
+        try:
+            tto.optimize(rank)
+            print('Optimization completed successfully')
+        except Exception as e:
+            print(f'Optimization failed: {e}')
+            result = None
+
+        print('-' * 30 + 'calculated info' + '-' * 30 + '\n')
+        print(tto.info() + '\n\n')
+        
+        result = tto.info()
+        
+        # Cache the result
+        with cache_lock:
+            cache[request_key] = result
+        
+        # Return the result as a JSON response
+        return jsonify({"minimum_value": result})
+    finally:
+        # Stop logging
+        dynamic_file_handler.stop_logging()
+        logger.removeHandler(dynamic_file_handler)
 
 # Flask route for downloading the log file
 @app.route('/download_solution', methods=['GET'])
