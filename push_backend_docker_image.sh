@@ -15,9 +15,7 @@ docker login
 echo "Docker login successful."
 
 # fetch user name from docker login
-export DOCKER_USERNAME=$(docker info
-  | grep Username
-  | awk '{print $2}')
+export DOCKER_USERNAME=$(docker info | grep Username | awk '{print $2}')
 
 echo "Tagging and pushing the image to Docker Hub..."
 # push above to docker hub
