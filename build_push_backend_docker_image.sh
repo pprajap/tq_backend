@@ -6,14 +6,14 @@ set -e
 # Treat unset variables as an error
 set -u
 
-echo "Starting cleanup..."
-# call ./cleanup.sh to remove all images and containers
-./cleanup.sh
-echo "Cleanup completed."
+# echo "Starting cleanup..."
+# # call ./cleanup.sh to remove all images and containers
+# ./cleanup.sh
+# echo "Cleanup completed."
 
 echo "Building tq-backend image..."
 # build tq-backend image
-docker build -f tq_backend/Dockerfile -t tq-backend .
+docker build -f Dockerfile -t tq-backend .
 echo "Image build completed."
 
 # Docker login
