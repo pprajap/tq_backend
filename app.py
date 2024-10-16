@@ -63,11 +63,7 @@ rank = 4
 functions = {
     "Alpine": lambda X: np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1),
     "Simple": lambda X: np.sin(0.1 * X[:, 0])**2 + 0.1 * np.sum(X[:, 1:]**2, axis=1),
-    "Tensor": lambda I: (I[:, 0] - 2)**2 + (I[:, 1] - 3)**2 + np.sum(I[:, 2:]**4, axis=1),
-    "Rosenbrock": lambda X: np.sum(100 * (X[:, 1:] - X[:, :-1]**2)**2 + (1 - X[:, :-1])**2, axis=1),
-    "Rastrigin": lambda X: 10 * X.shape[1] + np.sum(X**2 - 10 * np.cos(2 * np.pi * X), axis=1),
-    "Sphere": lambda X: np.sum(X**2, axis=1),
-    "Styblinski-Tang": lambda X: 0.5 * np.sum(X**4 - 16 * X**2 + 5 * X, axis=1)
+    "Tensor": lambda I: (I[:, 0] - 2)**2 + (I[:, 1] - 3)**2 + np.sum(I[:, 2:]**4, axis=1)
 }
 ##
 

@@ -20,72 +20,33 @@ The request body should be a JSON object with the following fields:
       def f(X):
           return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1)
       ```
-    - `Simple`: \( f(x) = \sin(0.1 \cdot x[0])^2 + 0.1 \cdot \sum x[1:]^2 \), \( x \in [-1, 1] \)
+    - [`Simple`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A64%2C%22character%22%3A5%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition"): \( f(x) = \sin(0.1 \cdot x[0])^2 + 0.1 \cdot \sum x[1:]^2 \), \( x \in [-1, 1] \)
       ```python
       def f(X):
           return np.sin(0.1 * X[:, 0])**2 + 0.1 * np.sum(X[:, 1:]**2, axis=1)
       ```
-    - `Tensor`: \( f(i) = (i[0] - 2)^2 + (i[1] - 3)^2 + \sum i[2:]^4 \), \( i \in [0, 1, 2, 3] \)
+    - [`Tensor`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A65%2C%22character%22%3A5%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition"): \( f(i) = (i[0] - 2)^2 + (i[1] - 3)^2 + \sum i[2:]^4 \), \( i \in [0, 1, 2, 3] \)
       ```python
       def f(I):
           return (I[:, 0] - 2)**2 + (I[:, 1] - 3)**2 + np.sum(I[:, 2:]**4, axis=1)
       ```
-    - `Rosenbrock`: \( f(x) = \sum 100 \cdot (x[i+1] - x[i]^2)^2 + (1 - x[i])^2 \), \( x \in [-2.048, 2.048] \)
-      ```python
-      def f(X):
-          return np.sum(100 * (X[:, 1:] - X[:, :-1]**2)**2 + (1 - X[:, :-1])**2, axis=1)
-      ```
-    - `Rastrigin`: \( f(x) = 10 \cdot d + \sum x[i]^2 - 10 \cdot \cos(2 \cdot \pi \cdot x[i]) \), \( x \in [-5.12, 5.12] \)
-      ```python
-      def f(X):
-          return 10 * X.shape[1] + np.sum(X**2 - 10 * np.cos(2 * np.pi * X), axis=1)
-      ```
-    - `Sphere`: \( f(x) = \sum x^2 \), \( x \in [-5.12, 5.12] \)
-      ```python
-      def f(X):
-          return np.sum(X**2, axis=1)
-      ```
-    - `Styblinski-Tang`: \( f(x) = 0.5 \cdot \sum x^4 - 16 \cdot x^2 + 5 \cdot x \), \( x \in [-5, 5] \)
-      ```python
-      def f(X):
-          return 0.5 * np.sum(X**4 - 16 * X**2 + 5 * X, axis=1)
-      ```
-- `isFunc` (bool, optional): Whether the function is a callable. Default is `True`.
-- `isVect` (bool, optional): Whether the function is vectorized. Default is `True`.
-- `withCache` (bool, optional): Whether to use caching. Default is `False`.
-- `withLog` (bool, optional): Whether to log the optimization process. Default is `True`.
-- `withOpt` (bool, optional): Whether to use optimization. Default is `False`.
+- [`isFunc`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A112%2C%22character%22%3A8%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.cpp%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A172%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A13%2C%22character%22%3A174%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (bool, optional): Whether the function is a callable. Default is [`True`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A112%2C%22character%22%3A36%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition").
+- [`isVect`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A113%2C%22character%22%3A8%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.cpp%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A185%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A13%2C%22character%22%3A187%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (bool, optional): Whether the function is vectorized. Default is [`True`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A112%2C%22character%22%3A36%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition").
+- [`withCache`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A114%2C%22character%22%3A8%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.cpp%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A198%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A13%2C%22character%22%3A200%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (bool, optional): Whether to use caching. Default is [`False`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A114%2C%22character%22%3A42%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition").
+- [`withLog`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A115%2C%22character%22%3A8%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.cpp%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A214%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A13%2C%22character%22%3A216%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (bool, optional): Whether to log the optimization process. Default is [`True`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A112%2C%22character%22%3A36%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition").
+- [`withOpt`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A116%2C%22character%22%3A8%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.cpp%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A228%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A13%2C%22character%22%3A230%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (bool, optional): Whether to use optimization. Default is [`False`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A114%2C%22character%22%3A42%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition").
+- [`forceRecal`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A117%2C%22character%22%3A8%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.cpp%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A14%2C%22character%22%3A242%7D%7D%2C%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_frontend%2FCppInterface.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A13%2C%22character%22%3A244%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (bool, optional): Whether to force recalculation even if the result is cached. Default is [`False`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A114%2C%22character%22%3A42%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition").
 
 ### Response
 
 The response will be a JSON object with the following field:
 
-- `minimum_value` (string): Information about the optimization result.
+- [`minimum_value`](command:_github.copilot.openSymbolFromReferences?%5B%22%22%2C%5B%7B%22uri%22%3A%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Fpratik%2FPublic%2Ftq_solution%2Ftq_backend%2Fapp.py%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22pos%22%3A%7B%22line%22%3A132%2C%22character%22%3A37%7D%7D%5D%2C%2256181b3a-9eab-43ce-b3d7-3c69a337178f%22%5D "Go to definition") (string): The result of the optimization process.
 
-### Example
+## GET /download_solution
 
-#### Request
-```json
-{
-    "dimensions": 10,
-    "lowerBound": -10.0,
-    "upperBound": 10.0,
-    "gridSizeFactorP": 2,
-    "gridSizeFactorQ": 12,
-    "evals": 100000,
-    "funcName": "Alpine",
-    "isFunc": true,
-    "isVect": true,
-    "withCache": false,
-    "withLog": true,
-    "withOpt": false
-}
-```
+This endpoint allows downloading the log file of the optimization process.
 
-#### Response
-```json
-{
-    "minimum_value": "Optimization result information"
-}
-```
+### Response
 
+The response will be a file download of the log file.

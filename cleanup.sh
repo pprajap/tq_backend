@@ -1,29 +1,19 @@
 #!/bin/bash
 
 # Stop all running containers
-if [ "$(docker ps -aq)" ]; then
-    docker stop $(docker ps -aq)
-fi
+docker stop $(docker ps -aq)
 
 # Remove all containers
-if [ "$(docker ps -aq)" ]; then
-    docker rm $(docker ps -aq)
-fi
+docker rm $(docker ps -aq)
 
 # Remove all images
-if [ "$(docker images -q)" ]; then
-    docker rmi $(docker images -q)
-fi
+docker rmi $(docker images -q)
 
 # Remove all networks
-if [ "$(docker network ls -q)" ]; then
-    docker network rm $(docker network ls -q)
-fi
+docker network rm $(docker network ls -q)
 
 # Remove all volumes
-if [ "$(docker volume ls -q)" ]; then
-    docker volume rm $(docker volume ls -q)
-fi
+docker volume rm $(docker volume ls -q)
 
 # Remove dangling images, containers, volumes, and networks
 docker system prune -a --volumes -f

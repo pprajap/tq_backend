@@ -15,9 +15,3 @@ EXPOSE 5000
 
 # Command to run the Flask app
 CMD ["python", "app.py"]
-
-# build the Docker image
-# docker build -t tq-backend .
-
-# run the Docker container
-# docker run -it --rm -p 5000:5000 tq-backend
